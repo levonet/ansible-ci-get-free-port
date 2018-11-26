@@ -22,7 +22,7 @@ This role is useful for getting free tcp port on remote host.
   vars:
     ci_get_free_port__var: project_port
   roles:
-  - role: levonet.ci-get-free-port
+  - role: levonet.ci_get_free_port
   tasks:
   - debug:
       msg: "Port: {{ project_port }}"

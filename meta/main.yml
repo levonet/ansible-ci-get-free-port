@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  role_name: ci-get-free-port
+  role_name: ci_get_free_port
   author: Pavlo Bashynskyi
   description: Get free tcp port on remote host
   company: '-'
