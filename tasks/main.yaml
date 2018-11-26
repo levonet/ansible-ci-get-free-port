@@ -3,24 +3,30 @@
 - name: Find free port from pool
   shell: |
     i=0
-    while [ ${i} -lt $((({{ ci_get_free_port__pool }})**2)) ]; do
-        PORT="`shuf -i {{ ci_get_free_port__pool }} -n 1`"
-        nc -z {{ ci_get_free_port__host }} $PORT || break
+    while [ ${i} -lt $(((${CI_GET_FREE_PORT_POOL})**2)) ]; do
+        PORT="`shuf -i ${CI_GET_FREE_PORT_POOL} -n 1`"
+        nc -z ${CI_GET_FREE_PORT_HOST} ${PORT} || break
         PORT=""
         i=$[$i+1]
     done
-    echo $PORT
+    echo ${PORT}
+  environment:
+    CI_GET_FREE_PORT_POOL: "{{ ci_get_free_port__pool }}"
+    CI_GET_FREE_PORT_HOST: "{{ ci_get_free_port__host }}"
   register: ci_get_free_port_output
-  when: ci_get_free_port__pool != ""
+  when: ci_get_free_port__pool | regex_search("^\d+-\d+$")
+  tags:
+  - skip_ansible_lint
 
 - debug:
-    msg: "Can't find free port from range {{ ci_get_free_port__host }}:{{ ci_get_free_port__pool }}, used by default '{{ ci_get_free_port__default }}'"
-  when: ci_get_free_port__pool != "" and ci_get_free_port_output.stdout == ""
+    msg: Can't find free port from range {{ ci_get_free_port__pool }}. Set '{{ ci_get_free_port__default }}'.
+  when: ci_get_free_port__pool | regex_search("^\d+-\d+$") and ci_get_free_port_output.stdout | length == 0
 
 - debug:
     msg: "Find free port {{ ci_get_free_port_output.stdout }}"
-  when: ci_get_free_port__pool != "" and ci_get_free_port_output.stdout != ""
+  when: ci_get_free_port__pool | regex_search("^\d+-\d+$") and ci_get_free_port_output.stdout | length > 0
 
 - name: Set {{ ci_get_free_port__var }}
-  set_fact: { "{{ ci_get_free_port__var }}": "{{ ci_get_free_port_output.stdout | default(ci_get_free_port__default) }}" }
-  when: ci_get_free_port__pool != ""
+  set_fact: {
+    "{{ ci_get_free_port__var }}": "{{ ci_get_free_port_output.stdout | default(ci_get_free_port__default, true) }}"
+  }
