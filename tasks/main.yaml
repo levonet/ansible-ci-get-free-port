@@ -1,0 +1,26 @@
+---
+
+- name: Find free port from pool
+  shell: |
+    i=0
+    while [ ${i} -lt $((({{ ci_get_free_port__pool }})**2)) ]; do
+        PORT="`shuf -i {{ ci_get_free_port__pool }} -n 1`"
+        nc -z {{ ci_get_free_port__host }} $PORT || break
+        PORT=""
+        i=$[$i+1]
+    done
+    echo $PORT
+  register: ci_get_free_port_output
+  when: ci_get_free_port__pool != ""
+
+- debug:
+    msg: "Can't find free port from range {{ ci_get_free_port__host }}:{{ ci_get_free_port__pool }}, used by default '{{ ci_get_free_port__default }}'"
+  when: ci_get_free_port__pool != "" and ci_get_free_port_output.stdout == ""
+
+- debug:
+    msg: "Find free port {{ ci_get_free_port_output.stdout }}"
+  when: ci_get_free_port__pool != "" and ci_get_free_port_output.stdout != ""
+
+- name: Set {{ ci_get_free_port__var }}
+  set_fact: { "{{ ci_get_free_port__var }}": "{{ ci_get_free_port_output.stdout | default(ci_get_free_port__default) }}" }
+  when: ci_get_free_port__pool != ""

@@ -1,0 +1,5 @@
+---
+ci_get_free_port__var: ci_get_free_port
+ci_get_free_port__pool: 1024-32767
+ci_get_free_port__host: 127.0.0.1
+ci_get_free_port__default: ""

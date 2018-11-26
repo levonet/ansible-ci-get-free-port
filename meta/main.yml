@@ -1,0 +1,39 @@
+---
+galaxy_info:
+  role_name: ci-get-free-port
+  author: Pavlo Bashynskyi
+  description: Get free tcp port on remote host
+  license: MIT
+  min_ansible_version: 2.0
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+    - name: EL
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: opensuse
+      versions:
+        - all
+    - name: SLES
+      versions:
+        - all
+    - name: MacOSX
+      versions:
+        - all
+  cloud_platforms: []
+  galaxy_tags: 
+   - ci
+   - cd
+   - ip
+   - tcp
+   - port
+   - infrastructure
+
+dependencies: []
